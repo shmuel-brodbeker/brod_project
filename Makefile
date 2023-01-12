@@ -1,2 +1,2 @@
 local:
-	gcc input.c -o input
+	gcc input.c input_processing.c -o input && ./input db.csv
