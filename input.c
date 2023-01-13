@@ -9,7 +9,8 @@ void print_list(List *head)
 {
     if (!head)
         return;
-    printf("%s, %s, %d\n", head->last_name, head->phone, head->id);
+    printf("%s, %s, %s, %d  ->  ", head->first_name, head->last_name, head->phone, head->id);
+    printf("debt: %d, date: %d/%d/%d \n",head->debt, head->date[0], head->date[1], head->date[2]);
     print_list (head->next);
 }
 

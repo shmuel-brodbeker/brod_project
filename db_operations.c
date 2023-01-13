@@ -13,12 +13,3 @@ typedef struct _List {
 } List;
 
 
-void add_to_list (List *row, List **head, List **tail)
-{
-    if (*head == NULL)
-    {
-        *head = row;
-    }
-
-
-}
