@@ -14,6 +14,21 @@ enum FIELDS {
     DATE
 };
 
+List *check_double_id(List *row, List *head)
+{
+    int id = row->id;
+    while (head)
+    {
+        if (id == head->id)
+        {
+            if (strcmp(row->first_name, head->first_name) || strcmp(row->last_name, head->last_name))
+                return NULL;
+        }
+        head = head->next;
+    }
+    return row;
+}
+
 int check_name(char *str, int len)
 {
     if (len == 0)

@@ -35,7 +35,11 @@ void read_file (FILE *file, List **head, List **tail)
     while (fgets(input, sizeof(input), file))
     {
         row = processing_file(input, sizeof(input));
-        add_to_list (row, head, tail);
+        row = check_double_id(row, *head);
+        if (row)
+        {
+            add_to_list (row, head, tail);
+        }
     }
 }
 
@@ -52,6 +56,8 @@ int main (int argc, char **argv)
     FILE *file = fopen(argv[1], "r");
     read_file(file, &head, &tail);
     fclose(file);
+
+    // print_sum_debt(head);
 
     print_list(head);
 
