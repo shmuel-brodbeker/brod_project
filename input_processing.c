@@ -14,7 +14,7 @@ enum FIELDS {
     DATE
 };
 
-List *check_double_id(List *row, List *head)
+List *check_double_id(List *row, List *head) 
 {
     int id = row->id;
     while (head)
@@ -22,7 +22,10 @@ List *check_double_id(List *row, List *head)
         if (id == head->id)
         {
             if (strcmp(row->first_name, head->first_name) || strcmp(row->last_name, head->last_name))
+            {
+                free(row);
                 return NULL;
+            }
         }
         head = head->next;
     }

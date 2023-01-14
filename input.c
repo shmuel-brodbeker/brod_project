@@ -35,7 +35,7 @@ void read_file (FILE *file, List **head, List **tail)
     while (fgets(input, sizeof(input), file))
     {
         row = processing_file(input, sizeof(input));
-        row = check_double_id(row, *head);
+        // row = check_double_id(row, *head); // --the main list may contain 2 rows for 1 id
         if (row)
         {
             add_to_list (row, head, tail);
@@ -46,6 +46,7 @@ void read_file (FILE *file, List **head, List **tail)
 int main (int argc, char **argv)
 {
     List *head = NULL, *tail = NULL;
+    Sort_list *sHead = NULL, *sTail;
 
     if (argc < 2)
     {
@@ -57,9 +58,12 @@ int main (int argc, char **argv)
     read_file(file, &head, &tail);
     fclose(file);
 
-    // print_sum_debt(head);
+    // print_list(head);
+    // puts("");
 
-    print_list(head);
+    build_sort_list(head, &sHead, &sTail);
+    print_sort_list(sHead);
+
 
     // prompt();
 

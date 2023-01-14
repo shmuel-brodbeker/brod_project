@@ -10,6 +10,15 @@ typedef struct _List {
     int id;
     int debt;
 } List;
+typedef struct _sort_list {
+    struct _sort_list *next;
+    List *data;
+    int debt;
+} Sort_list;
+
+void build_sort_list (List*, Sort_list**, Sort_list**);
+void print_sort_list(Sort_list*);
+
 
 
 #endif
