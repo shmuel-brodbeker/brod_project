@@ -5,31 +5,79 @@
 
 #include "db_operations.h"
 
-enum FIELDS {
-    FIRST_N,
-    LAST_N,
-    ID,
-    PHONE,
-    DEBT,
-    DATE
-};
+#define MIN_OF(_a, _b) ((_a < _b) ? _a : _b)
 
-List *check_double_id(List *row, List *head) 
+Select * check_select_query (char *input)
 {
-    int id = row->id;
-    while (head)
+    Select *s_query = calloc(1, sizeof(Select));
+    if (!s_query)
     {
-        if (id == head->id)
-        {
-            if (strcmp(row->first_name, head->first_name) || strcmp(row->last_name, head->last_name))
-            {
-                free(row);
-                return NULL;
-            }
-        }
-        head = head->next;
+        return NULL; // err msg
     }
-    return row;
+    int len = 0;
+    char *fields[] = {"first name", "last name", "phone", "id", "debt", "date"};
+    char s_field[11] = {0};
+    char *p = input;
+
+    while (*p != '<' && *p != '>' && *p != '=' && *p != '!') //  !  ==   !=
+    {
+        if (*p == '\n')
+            goto err;
+        p++; len++;
+    }
+    strncpy(s_field, input, MIN_OF(len, sizeof(s_field)));
+    s_query->parameter = *p;
+    
+    if (*p == '!')
+        p++;
+    
+    do {
+        p++;
+    } while (*p == ' ');
+    
+    if (!strncmp(s_field, fields[0], strlen(fields[0])))
+    {
+        s_query->field = FIRST_N;
+        sscanf(p, "%19[^\t\n]", s_query->to_test_str);
+        puts(s_query->to_test_str); // debug
+    }
+    else if (!strncmp(s_field, fields[1], strlen(fields[1])))
+    {
+        s_query->field = LAST_N;
+        sscanf(p, "%19[^\t\n]", s_query->to_test_str);
+    }
+    else if (!strncmp(s_field, fields[2], strlen(fields[2])))
+    {
+        s_query->field = PHONE;
+        sscanf(p, "%19[^\t\n]", s_query->to_test_str);
+    }
+    else if (!strncmp(s_field, fields[3], strlen(fields[3])))
+    {
+        s_query->field = ID;
+        sscanf(p, "%d", &s_query->to_test_num[0]);
+        printf("%d", s_query->to_test_num[0]);
+    }
+    else if (!strncmp(s_field, fields[4], strlen(fields[4])))
+    {
+        s_query->field = DEBT;
+        sscanf(p, "%d", &s_query->to_test_num[0]);
+    }
+    else if (!strncmp(s_field, fields[5], strlen(fields[4])))
+    {
+        s_query->field = DATE;
+        sscanf(p, "%d%*c%d%*c%d", &s_query->to_test_num[0], 
+                    &s_query->to_test_num[1], &s_query->to_test_num[2]);
+    }
+    else 
+    {
+        goto err;
+    }
+    return s_query;
+
+err:
+    puts("Error");
+    free(s_query);
+    return NULL;
 }
 
 int check_name(char *str, int len)
@@ -80,7 +128,7 @@ int check_phone (char *str, int len)
 int check_date (int *date)
 {
     int d = date[0], m = date[1], y = date[2];
-    if (d < 0 || d > 31 || m < 0 || m > 12)
+    if (d < 0 || d > 31 || m < 0 || m > 12 || y < 1900 || y > 2200)
     {
         date[0] = 0, date[1] = 0, date[2] = 0;
         return 1;
@@ -96,6 +144,10 @@ List *processing_file (char *input, int size)
     int len = 0;
 
     row = calloc(1, sizeof(List));
+    if (!row)
+    {
+        return NULL;
+    }
 
     for (int i = 0; i < size; i++, p++, len++)
     {

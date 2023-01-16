@@ -12,20 +12,21 @@ typedef struct _List {
     int debt;
 } List;
 
-typedef struct _sort_list {
-    struct _sort_list *next;
-    List *data;
-    int debt;
-} Sort_list;
+typedef struct _Select {
+    int field;
+    int to_test_num[3];
+    char parameter;
+    char to_test_str[20];
+} Select;
 
-void add_to_sort_list(List *head, Sort_list **sHead, Sort_list **sTail)
-{
-    Sort_list *new = calloc(1, sizeof(Sort_list));
-    new->data = head;
-    new->debt = head->debt;
-    new->next = *sHead;
-    *sHead = new;
-}
+enum FIELDS {
+    FIRST_N,
+    LAST_N,
+    ID,
+    PHONE,
+    DEBT,
+    DATE
+};
 
 int cmp_date (int a[3], int b[3])
 {
@@ -53,46 +54,119 @@ int cmp_date (int a[3], int b[3])
     }
 }
 
-int does_id_exist (List *node, Sort_list *sHead)
+void print_node(List *head)
 {
-    int id = node->id;
-    while(sHead)
-    {
-        if (id == sHead->data->id)
-        {
-            int last_date = cmp_date(node->date, sHead->data->date);
-            sHead->debt += node->debt; // Sum debt
-            if (last_date > 0)
-                sHead->data = node; // Update date and phone num, point to the last struct
-            return 1;
-        }
-        sHead = sHead->next;
-    }
-    return 0;
+    if (!head)
+        return;
+    printf("%s %s, %s, ID: %d  \n  ", head->first_name, head->last_name, head->phone, head->id);
+    printf("\t-> debt: %d \n\t-> date: %d/%d/%d \n",head->debt, head->date[0], head->date[1], head->date[2]);
 }
 
-void build_sort_list (List *head, Sort_list **sHead, Sort_list **sTail)
+void print_list (List *head)
+{
+    if (!head)
+        return;
+    print_node(head);
+    print_list(head->next);
+}
+
+int cmp (int res, char parameter)  
+{
+    switch (parameter)
+    {
+        case '<':
+            return (res < 0) ? 0 : 1 ;
+        case '>':
+            return (res > 0) ? 0 : 1 ;
+        case '=':
+            return (res == 0) ? 0 : 1 ;
+        case '!':
+            return (res != 0) ? 0 : 1 ;
+        default:
+            return 1 ;
+    }
+}
+
+void print_query (Select *pro_query, List *head)
 {
     if (!head)
         return;
 
-    while (head)
+    switch (pro_query->field)
     {
-        if (does_id_exist(head, *sHead) == 0)
-        {
-            add_to_sort_list(head, sHead, sTail);
-        }
-        head = head->next;
+        case FIRST_N:
+            if (!cmp (strcmp(pro_query->to_test_str, head->first_name), pro_query->parameter))
+                print_node(head);
+            break;
+        case LAST_N:
+            if (!cmp (strcmp(pro_query->to_test_str, head->last_name), pro_query->parameter))
+                print_node(head);
+            break;
+        case ID:
+            if (!cmp(head->id - pro_query->to_test_num[0], pro_query->parameter))
+                print_node(head);
+            break;
+        case PHONE:
+            if (!cmp (strcmp(pro_query->to_test_str, head->phone), pro_query->parameter))
+                print_node(head);
+            break;
+        case DEBT:
+            if (!cmp(head->debt - pro_query->to_test_num[0], pro_query->parameter))
+                print_node(head);
+            break;
+        case DATE:
+            if (!cmp(cmp_date(head->date, pro_query->to_test_num), pro_query->parameter))
+                print_node(head);
+            break;
     }
-    // sort_by_debt(sHead);
+    print_query(pro_query, head->next);
 }
 
-void print_sort_list(Sort_list *sHead)
+void update_row (List *a, List *b)
 {
-    if (!sHead)
-        return;
-    print_sort_list (sHead->next);
-    List *p = sHead->data;
-    printf("%s, %s, %s, %d  ->  ", p->first_name, p->last_name, p->phone, p->id);
-    printf("debt: %d, date: %d/%d/%d \n",sHead->debt, p->date[0], p->date[1], p->date[2]);
+    a->debt += b->debt;
+    if (cmp_date(a->date, b->date) < 0)
+    {
+        memcpy(a->date, b->date, sizeof(b->date));
+        memcpy(a->phone, b->phone, sizeof(b->phone));
+    }
+}
+
+List *is_id_exist(List *row, List **head)
+{
+    List **pNext = head;
+    List *temp;
+
+    while (*pNext)
+    {
+        if (row->id == (*pNext)->id)
+        {
+            update_row(row, *pNext);
+                temp = *pNext;
+                *pNext = (*pNext)->next;
+                free(temp);
+            return row;
+        }
+        pNext = &((*pNext)->next);
+    }
+    return row;
+}
+
+void add_to_list (List *row, List **head)
+{
+    List **temp = head;
+    if (*head == NULL || (*head)->debt > row->debt)
+    {
+        row->next = *head;
+        *head = row;
+    }
+    else
+    {
+        while (*temp && (*temp)->debt < row->debt)
+        {
+            temp = &((*temp)->next);
+        }
+        row->next = *temp;
+        *temp = row;
+    }
 }

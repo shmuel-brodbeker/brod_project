@@ -5,25 +5,45 @@
 #include "db_operations.h"
 #include "input_processing.h"
 
-void print_list(List *head)
-{
-    if (!head)
-        return;
-    printf("%s, %s, %s, %d  ->  ", head->first_name, head->last_name, head->phone, head->id);
-    printf("debt: %d, date: %d/%d/%d \n",head->debt, head->date[0], head->date[1], head->date[2]);
-    print_list (head->next);
-}
 
-void add_to_list (List *row, List **head, List **tail)
+void get_query (List *head)
 {
-    if (*tail)
+    char menu[] = {"Enter a query <quit for exit>"};
+    char query[200];
+    char command[20];
+
+    while(1)
     {
-        (*tail)->next = row;
-    }
-    *tail = row;
-    if ((*head) == NULL)
-    {
-        *head = *tail;
+        printf("\n%s\n-->", menu);
+        fgets(query, sizeof(query), stdin);
+        sscanf(query, "%s", command);
+        if (!strcmp(command, "select"))
+        {
+            Select *pro_query = check_select_query (query + strlen(command) + 1);
+            if (!pro_query)
+            {
+                puts("Error");
+                continue;
+            }
+            print_query (pro_query, head);
+        }
+        else if (!strcmp(command, "set"))
+        {
+            // add_new_client(query + strlen(command) + 1);
+        }
+        else if (!strcmp(command, "print"))
+        {
+            print_list(head);
+        }
+        else if (!strcmp(command, "quit"))
+        {
+            break;
+        }
+        else
+        {
+            puts("Error query word");
+            puts("Usage: select, set, print, quit.");
+        }
     }
 }
 
@@ -35,10 +55,10 @@ void read_file (FILE *file, List **head, List **tail)
     while (fgets(input, sizeof(input), file))
     {
         row = processing_file(input, sizeof(input));
-        // row = check_double_id(row, *head); // --the main list may contain 2 rows for 1 id
         if (row)
         {
-            add_to_list (row, head, tail);
+            row = is_id_exist(row, head);
+            add_to_list (row, head);
         }
     }
 }
@@ -46,7 +66,6 @@ void read_file (FILE *file, List **head, List **tail)
 int main (int argc, char **argv)
 {
     List *head = NULL, *tail = NULL;
-    Sort_list *sHead = NULL, *sTail;
 
     if (argc < 2)
     {
@@ -58,14 +77,9 @@ int main (int argc, char **argv)
     read_file(file, &head, &tail);
     fclose(file);
 
-    // print_list(head);
-    // puts("");
+    print_list(head);
 
-    build_sort_list(head, &sHead, &sTail);
-    print_sort_list(sHead);
-
-
-    // prompt();
+    get_query(head);
 
     // list_to_file(head, argv[1]);
     // free_list(head);   

@@ -10,14 +10,30 @@ typedef struct _List {
     int id;
     int debt;
 } List;
-typedef struct _sort_list {
-    struct _sort_list *next;
-    List *data;
-    int debt;
-} Sort_list;
 
-void build_sort_list (List*, Sort_list**, Sort_list**);
-void print_sort_list(Sort_list*);
+typedef struct _Select {
+    int field;
+    int to_test_num[3];
+    char parameter;
+    char to_test_str[20];
+} Select;
+
+enum FIELDS {
+    FIRST_N,
+    LAST_N,
+    ID,
+    PHONE,
+    DEBT,
+    DATE
+};
+
+void print_list (List *head);
+void print_query (Select *pro_query, List *head);
+void add_to_list (List *row, List **head);
+List *is_id_exist(List *row, List **head);
+
+// void build_sort_list (List*, Sort_list**, Sort_list**);
+// void print_sort_list(Sort_list*);
 
 
 
