@@ -33,14 +33,6 @@ int check_name(char *str, int len)
     return 0;
 }    
 
-int check_id (int id)
-{
-    char check[20];
-    sprintf(check, "%d", id);
-    if (strlen(check) != 9 || id <= 0)
-        return 1; 
-}
-
 int check_phone (char *str, int len)
 {
     if (str[0] != '0' || len != 10)
@@ -56,6 +48,7 @@ int check_date (int *date)
     int d = date[0], m = date[1], y = date[2];
     if (d < 0 || d > 31 || m < 0 || m > 12 || y < 1900 || y > 2200)
     {
+        // for invalid date i reset it NULL
         date[0] = 0, date[1] = 0, date[2] = 0;
         return 1;
     }
@@ -94,6 +87,11 @@ List *processing_file (char *input, int size)
                     break;
                 case ID:
                     sscanf(start_field ,"%d", &row->id);
+                    if (len != 9)
+                    {
+                        printf("Warning! wrong ID %d, This row cannot be accepted.\n", row->id);
+                        goto err;
+                    }
                     break;
                 case PHONE:
                     strncpy(row->phone, start_field, len);
@@ -117,11 +115,6 @@ List *processing_file (char *input, int size)
     }
     check_name (row->first_name, strlen(row->first_name));
     check_name (row->last_name, strlen(row->last_name));
-    // if (check_id(row->id))
-    // {
-    //     puts("wrong ID, can not get this line.");
-    //     goto err;
-    // }
     check_phone(row->phone, strlen(row->phone));
     check_date(row->date);
     
@@ -129,7 +122,6 @@ List *processing_file (char *input, int size)
 
 err:
     free(row);
-    puts("Error"); // debug 
     return NULL;
 }
 
@@ -271,6 +263,11 @@ List *add_new_row (char *input)
                 break;
             case ID:
                 sscanf(start ,"%d", &new->id);
+                if (len != 9)
+                {
+                    printf("Wrong ID %d, This row cannot be accepted.\n", new->id);
+                    goto err;
+                }
                 printf("id: %d\n", new->id); //
                 break;
             case PHONE:
@@ -290,11 +287,6 @@ List *add_new_row (char *input)
 
     check_name (new->first_name, strlen(new->first_name));
     check_name (new->last_name, strlen(new->last_name));
-    // if (check_id(new->id))
-    // {
-    //     puts("wrong ID, can not get this line.");
-    //     goto err;
-    // }
     check_phone(new->phone, strlen(new->phone));
     check_date(new->date);
     

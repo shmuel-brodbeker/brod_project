@@ -5,6 +5,7 @@
 #include "db_operations.h"
 #include "input_processing.h"
 
+#define LINE "============="
 
 void get_query (List *head)
 {
@@ -17,7 +18,7 @@ void get_query (List *head)
         printf("\n%s\n-->", menu);
         fgets(query, sizeof(query), stdin);
         sscanf(query, "%s", command);
-        
+
         if (!strcmp(command, "select"))
         {
             Select *pro_query = check_select_query (query + strlen(command) + 1);
@@ -83,7 +84,9 @@ int main (int argc, char **argv)
     read_file(file, &head, &tail);
     fclose(file);
 
+    printf("\n%s List of debt %s\n", LINE, LINE);
     print_list(head);
+    printf("%s%s%s\n", LINE, LINE, LINE);
 
     get_query(head);
 
