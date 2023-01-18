@@ -31,10 +31,7 @@ void print_list (List *head);
 void print_query (Select *pro_query, List *head);
 void add_to_list (List *row, List **head);
 List *is_id_exist(List *row, List **head);
-
-// void build_sort_list (List*, Sort_list**, Sort_list**);
-// void print_sort_list(Sort_list*);
-
+void free_list (List *head);
 
 
 #endif

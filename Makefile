@@ -11,7 +11,7 @@ db_operations.o: db_operations.c
 	gcc -g -c db_operations.c
 
 gdb:
-	gdb --args ./input db.csv
+	gdb --args ./segmn db.csv
 
 clean:
 	rm -f *.o 

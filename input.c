@@ -17,19 +17,25 @@ void get_query (List *head)
         printf("\n%s\n-->", menu);
         fgets(query, sizeof(query), stdin);
         sscanf(query, "%s", command);
+        
         if (!strcmp(command, "select"))
         {
             Select *pro_query = check_select_query (query + strlen(command) + 1);
             if (!pro_query)
             {
-                puts("Error");
+                puts("Error"); // err msg
                 continue;
             }
             print_query (pro_query, head);
         }
         else if (!strcmp(command, "set"))
         {
-            // add_new_client(query + strlen(command) + 1);
+            List *new = add_new_row(query + strlen(command) + 1);
+            if (new)
+            {
+                new = is_id_exist(new, &head);
+                add_to_list (new, &head);
+            }
         }
         else if (!strcmp(command, "print"))
         {
@@ -41,7 +47,7 @@ void get_query (List *head)
         }
         else
         {
-            puts("Error query word");
+            puts("Error - query word");
             puts("Usage: select, set, print, quit.");
         }
     }
@@ -82,7 +88,7 @@ int main (int argc, char **argv)
     get_query(head);
 
     // list_to_file(head, argv[1]);
-    // free_list(head);   
+    free_list(head);   
     
     return 0;
 }
