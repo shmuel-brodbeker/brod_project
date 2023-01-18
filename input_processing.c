@@ -40,6 +40,14 @@ int check_phone (char *str, int len)
         strcpy(str, "<rng num>");
         return 1;
     }
+    for (int i = 0; i < len; i++)
+    {
+        if (str[i] < '0' || str[i] > '9')
+        {
+            strcpy(str, "<rng num>");
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -49,6 +57,7 @@ int check_date (int *date)
     if (d < 0 || d > 31 || m < 0 || m > 12 || y < 1900 || y > 2200)
     {
         // for invalid date i reset it NULL
+        // The information about the debt is not deleted
         date[0] = 0, date[1] = 0, date[2] = 0;
         return 1;
     }
@@ -87,7 +96,7 @@ List *processing_file (char *input, int size)
                     break;
                 case ID:
                     sscanf(start_field ,"%d", &row->id);
-                    if (len != 9)
+                    if (len != 9 || row->id <= 0)
                     {
                         printf("Warning! wrong ID %d, This row cannot be accepted.\n", row->id);
                         goto err;
@@ -165,7 +174,8 @@ Select *check_select_query (char *input)
     Select *s_query = calloc(1, sizeof(Select));
     if (!s_query)
     {
-        return NULL; // err msg
+        puts("An error has occurred, try again.");
+        return NULL; 
     }
     
     char *p = input;
@@ -263,7 +273,7 @@ List *add_new_row (char *input)
                 break;
             case ID:
                 sscanf(start ,"%d", &new->id);
-                if (len != 9)
+                if (len != 9 || new->id <= 0)
                 {
                     printf("Wrong ID %d, This row cannot be accepted.\n", new->id);
                     goto err;
