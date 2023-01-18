@@ -100,10 +100,10 @@ List *processing_file (char *input, int size)
             switch (active_field)
             {
                 case FIRST_N:
-                    strncpy(row->first_name, start_field, MIN_OF(len, sizeof(row->first_name)));
+                    strncpy(row->first_name, start_field, len);
                     break;
                 case LAST_N:
-                    strncpy(row->last_name, start_field, MIN_OF(len, sizeof(row->last_name)));
+                    strncpy(row->last_name, start_field, len);
                     break;
                 case ID:
                     sscanf(start_field ,"%d", &row->id);
@@ -295,9 +295,11 @@ List *add_new_row (char *input)
         {
             case FIRST_N:
                 strncpy(new->first_name, start, len);
+                printf("f= %s\n", new->first_name); //
                 break;
             case LAST_N:
                 strncpy(new->last_name, start, len);
+                printf("l= %s\n", new->last_name); // 
                 break;
             case ID:
                 sscanf(start ,"%d", &new->id);
@@ -306,15 +308,19 @@ List *add_new_row (char *input)
                     printf("Wrong ID %d, This row cannot be accepted.\n", new->id);
                     goto err;
                 }
+                printf("id: %d\n", new->id); //
                 break;
             case PHONE:
                 strncpy(new->phone, start, len);
+                printf("phone= %s\n", new->phone); // 
                 break;
             case DEBT:
                 new->debt = atoi(start);
+                printf("debt: %d\n", new->debt); //
                 break;
             case DATE:
                 sscanf(start ,"%d%*c%d%*c%d", &new->date[0], &new->date[1],&new->date[2]);
+                printf("date: %d/%d/%d\n",new->date[0], new->date[1],new->date[2]); //
                 break;
             default:
                 puts("Error. field name unidentified.");

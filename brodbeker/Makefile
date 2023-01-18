@@ -1,5 +1,5 @@
 run: input.o input_processing.o db_operations.o
-	gcc -g input.o input_processing.o db_operations.o -o segmn && ./segmn db3.csv
+	gcc -g input.o input_processing.o db_operations.o -o segmn && ./segmn db.csv
 
 input.o: input.c
 	gcc -g -c input.c 

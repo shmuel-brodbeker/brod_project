@@ -56,7 +56,7 @@ void get_query (List *head)
 
 void read_file (FILE *file, List **head, List **tail)
 {
-    char input[400] = {0};
+    char input[200] = {0};
     List *row = NULL;
 
     while (fgets(input, sizeof(input), file))
@@ -81,11 +81,6 @@ int main (int argc, char **argv)
     }
 
     FILE *file = fopen(argv[1], "r");
-    if (!file)
-    {
-        puts("File not found");
-        return 1;
-    }
     read_file(file, &head, &tail);
     fclose(file);
 

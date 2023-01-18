@@ -139,7 +139,7 @@ void update_row (List *a, List *b)
         memcpy(a->phone, b->phone, sizeof(b->phone));
     }
     if (strcmp(a->first_name, b->first_name) || strcmp(a->last_name, b->last_name))
-        printf("Warning! found different names for id %09d\n", a->id);
+        printf("Warning! different names for id %09d\n", a->id);
 }
 
 List *is_id_exist(List *row, List **head)
