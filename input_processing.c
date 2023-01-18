@@ -51,6 +51,17 @@ int check_phone (char *str, int len)
     return 0;
 }
 
+int check_id (char *start)
+{
+    char *p = start;
+    for (int i = 0; i < 9; i++, p++)
+    {
+        if (*p < '0' || *p > '9')
+            return 1;
+    }
+    return 0;
+}
+
 int check_date (int *date)
 {
     int d = date[0], m = date[1], y = date[2];
@@ -96,7 +107,7 @@ List *processing_file (char *input, int size)
                     break;
                 case ID:
                     sscanf(start_field ,"%d", &row->id);
-                    if (len != 9 || row->id <= 0)
+                    if (len != 9 || row->id <= 0 || check_id(start_field))
                     {
                         printf("Warning! wrong ID %d, This row cannot be accepted.\n", row->id);
                         goto err;
