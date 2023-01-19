@@ -11,10 +11,11 @@ void get_query (List *head)
 {
     char menu[] = {"Enter a query <quit for exit>"};
     char query[200];
-    char command[20];
+    char command[30];
 
     while(1)
     {
+        memset(query, 0, sizeof(query));
         printf("\n%s\n-->", menu);
         fgets(query, sizeof(query), stdin);
         sscanf(query, "%s", command);
@@ -22,12 +23,10 @@ void get_query (List *head)
         if (!strcmp(command, "select"))
         {
             Select *pro_query = check_select_query (query + strlen(command) + 1);
-            if (!pro_query)
+            if (pro_query)
             {
-                puts("Error"); // err msg
-                continue;
+                print_query (pro_query, head);
             }
-            print_query (pro_query, head);
         }
         else if (!strcmp(command, "set"))
         {
@@ -56,7 +55,7 @@ void get_query (List *head)
 
 void read_file (FILE *file, List **head, List **tail)
 {
-    char input[400] = {0};
+    char input[250] = {0};
     List *row = NULL;
 
     while (fgets(input, sizeof(input), file))

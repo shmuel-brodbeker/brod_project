@@ -118,6 +118,11 @@ List *processing_file (char *input, int size)
                     break;
                 case DEBT:
                     sscanf(start_field ,"%d", &row->debt);
+                    if (row->debt == 0)
+                    {
+                        printf("Warning! debt for ID %d is not found, This row cannot be accepted.\n", row->id);
+                        goto err;
+                    }
                     break;
                 case DATE:
                     sscanf(start_field ,"%d%*c%d%*c%d", &row->date[0], &row->date[1],&row->date[2]);
@@ -280,7 +285,7 @@ List *add_new_row (char *input)
         len = 0;
         while (*p && *p != ',') 
         {
-            if (*p == '\n' && sum_fields == 5)
+            if (*p == '\n' && sum_fields < 5)
             {
                 puts("Too few fields");
                 goto err;
@@ -312,6 +317,11 @@ List *add_new_row (char *input)
                 break;
             case DEBT:
                 new->debt = atoi(start);
+                if (new->debt == 0)
+                {
+                    printf("Debt for ID %d is not found, This row cannot be accepted.\n", new->id);
+                    goto err;
+                }
                 break;
             case DATE:
                 sscanf(start ,"%d%*c%d%*c%d", &new->date[0], &new->date[1],&new->date[2]);
